@@ -309,7 +309,7 @@ export function mapCamaraDeputyToLocal(deputado: CamaraDeputado | any) {
     email,
     telefone,
     situacao: 'Exercício' as const,
-    legislature: deputado?.idLegislatura ?? u?.idLegislatura ?? 0,
+    legislatura: deputado?.idLegislatura ?? u?.idLegislatura ?? 0,
     dataNascimento: formatDate(deputado?.dataNascimento ?? deputado?.data ?? ''),
     naturalidade: deputado?.ufNascimento ? `${deputado.municipioNascimento} - ${deputado.ufNascimento}` : '',
     escolaridade: deputado?.escolaridade ?? u?.escolaridade ?? '',
