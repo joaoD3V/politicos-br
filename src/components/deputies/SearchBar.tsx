@@ -10,6 +10,7 @@ interface SearchBarProps {
   placeholder?: string;
   className?: string;
   size?: "default" | "lg";
+  disabled?: boolean;
 }
 
 export function SearchBar({
@@ -19,6 +20,7 @@ export function SearchBar({
   placeholder = "Buscar deputado por nome ou partido...",
   className,
   size = "default",
+  disabled = false,
 }: SearchBarProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,12 +51,13 @@ export function SearchBar({
         <Button
           type="submit"
           size={size === "lg" ? "default" : "sm"}
+          disabled={disabled}
           className={cn(
             "absolute right-1.5 top-1/2 -translate-y-1/2",
             size === "lg" && "right-2"
           )}
         >
-          Buscar
+          {disabled ? "Buscando..." : "Buscar"}
         </Button>
       </div>
     </form>

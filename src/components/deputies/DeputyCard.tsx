@@ -1,16 +1,18 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { MapPin, Building2, User } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import type { Deputy } from "@/data/mockDeputies";
 import { cn } from "@/lib/utils";
 
 interface DeputyCardProps {
   deputy: Deputy;
+  highlight?: string;
 }
 
-export function DeputyCard({ deputy }: DeputyCardProps) {
+export function DeputyCard({ deputy, highlight }: DeputyCardProps) {
   const situacaoStyles = {
     "Exercício": "bg-status-approved text-status-approved-foreground",
     "Afastado": "bg-status-pending text-status-pending-foreground",
@@ -21,9 +23,20 @@ export function DeputyCard({ deputy }: DeputyCardProps) {
     <Card className="group overflow-hidden transition-all hover:shadow-lg">
       <CardContent className="p-0">
         <div className="flex flex-col sm:flex-row">
-          {/* Photo placeholder */}
+          {/* Photo */}
           <div className="flex h-32 w-full items-center justify-center bg-muted sm:h-auto sm:w-32 sm:min-h-[160px]">
-            <User className="h-16 w-16 text-muted-foreground/40" />
+            <Avatar className="h-full w-full sm:h-auto sm:w-28 sm:min-h-[160px]">
+              {deputy.foto && (
+                <AvatarImage 
+                  src={deputy.foto} 
+                  alt={`Foto de ${deputy.nome}`}
+                  className="object-cover h-full w-full"
+                />
+              )}
+              <AvatarFallback className="bg-muted">
+                <User className="h-12 w-12 sm:h-14 sm:w-14 text-muted-foreground/40" />
+              </AvatarFallback>
+            </Avatar>
           </div>
 
           {/* Content */}
@@ -56,7 +69,7 @@ export function DeputyCard({ deputy }: DeputyCardProps) {
 
             <div className="mt-4">
               <Button asChild size="sm" className="w-full sm:w-auto">
-                <Link to={`/deputado/${deputy.id}`}>Ver Perfil</Link>
+                <Link href={`/deputado/${deputy.id}`}>Ver Perfil</Link>
               </Button>
             </div>
           </div>

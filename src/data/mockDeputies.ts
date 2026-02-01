@@ -592,43 +592,10 @@ export const mockDeputies: Deputy[] = [
   }
 ];
 
-export const getDeputyById = (id: string): Deputy | undefined => {
-  return mockDeputies.find(d => d.id === id);
-};
+import { searchDeputies, getDeputyById } from "@/services/camara-api";
 
-export const searchDeputies = (
-  query: string = "",
-  filters: {
-    partido?: string;
-    uf?: string;
-    situacao?: string;
-  } = {}
-): Deputy[] => {
-  let results = [...mockDeputies];
-  
-  if (query) {
-    const lowerQuery = query.toLowerCase();
-    results = results.filter(d => 
-      d.nome.toLowerCase().includes(lowerQuery) ||
-      d.nomeCompleto.toLowerCase().includes(lowerQuery) ||
-      d.partido.toLowerCase().includes(lowerQuery)
-    );
-  }
-  
-  if (filters.partido) {
-    results = results.filter(d => d.partido === filters.partido);
-  }
-  
-  if (filters.uf) {
-    results = results.filter(d => d.uf === filters.uf);
-  }
-  
-  if (filters.situacao) {
-    results = results.filter(d => d.situacao === filters.situacao);
-  }
-  
-  return results;
-};
+// Exportar funções da API real para manter compatibilidade com código existente
+export { searchDeputies, getDeputyById };
 
 export const getExpensesByCategory = (despesas: Despesa[]): { name: string; value: number }[] => {
   const categorySums: Record<string, number> = {};

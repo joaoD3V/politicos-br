@@ -1,73 +1,56 @@
-# Welcome to your Lovable project
+# PoliticosBR - Transparência Política
 
-## Project info
+Plataforma de tecnologia cívica focada em transparência política e conscientização pública. Utilizamos dados oficiais do governo brasileiro para promover a cidadania informada.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Tecnologias
 
-## How can I edit this code?
+- **Next.js 16.1.6** com App Router e Turbopack
+- **TypeScript** para tipagem segura
+- **Tailwind CSS** para estilização
+- **Radix UI** para componentes acessíveis
+- **Recharts** para visualização de dados
+- **React Query** para gerenciamento de dados
 
-There are several ways of editing your application.
+## Estrutura do Projeto
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+├── src/
+│   ├── app/              # Páginas do App Router
+│   ├── components/        # Componentes reutilizáveis
+│   ├── hooks/           # Hooks personalizados
+│   ├── lib/             # Utilitários
+│   └── data/            # Dados e mocks
+├── public/              # Arquivos estáticos
+└── configs              # Arquivos de configuração
 ```
 
-**Edit a file directly in GitHub**
+## Começando
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+# Instalar dependências
+yarn install
 
-**Use GitHub Codespaces**
+# Iniciar servidor de desenvolvimento
+yarn dev
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Construir para produção
+yarn build
 
-## What technologies are used for this project?
+# Iniciar servidor de produção
+yarn start
+```
 
-This project is built with:
+Acesse [http://localhost:3000](http://localhost:3000) para visualizar o projeto.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Funcionalidades
 
-## How can I deploy this project?
+- 🏛️ Busca de deputados federais
+- 📊 Visualização de dados de despesas
+- 📈 Gráficos de presença e votações
+- 🔍 Filtros avançados
+- 📱 Interface responsiva
+- 🌙 Suporte a tema escuro
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## Licença
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+MIT License - Open Source para transparência política.

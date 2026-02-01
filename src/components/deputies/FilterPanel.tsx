@@ -25,7 +25,7 @@ export function FilterPanel({ filters, onFilterChange, onClearFilters }: FilterP
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-2 text-sm font-medium text-foreground">
           <Filter className="h-4 w-4" />
           Filtros
@@ -43,7 +43,7 @@ export function FilterPanel({ filters, onFilterChange, onClearFilters }: FilterP
         )}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {/* Partido Filter */}
         <Select
           value={filters.partido}

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Github, ExternalLink } from "lucide-react";
 
 const footerLinks = {
@@ -20,7 +20,7 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-4">
           {/* Brand */}
           <div className="md:col-span-2">
-            <Link to="/" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
                 <span className="text-lg font-bold text-primary-foreground">P</span>
               </div>
@@ -52,7 +52,7 @@ export function Footer() {
               {footerLinks.plataforma.map((link) => (
                 <li key={link.href}>
                   <Link
-                    to={link.href}
+                    href={link.href}
                     className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {link.label}
@@ -80,7 +80,7 @@ export function Footer() {
                     </a>
                   ) : (
                     <Link
-                      to={link.href}
+                      href={link.href}
                       className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                     >
                       {link.label}

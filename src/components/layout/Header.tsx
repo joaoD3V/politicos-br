@@ -1,4 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
+'use client';
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Search, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -13,12 +16,12 @@ const navLinks = [
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const location = useLocation();
+  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
       <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
             <span className="text-lg font-bold text-primary-foreground">P</span>
           </div>
@@ -32,13 +35,13 @@ export function Header() {
           {navLinks.map((link) => (
             <Link
               key={link.href}
-              to={link.href}
-              className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
-                location.pathname === link.href
-                  ? "text-primary"
-                  : "text-muted-foreground"
-              )}
+                href={link.href}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-primary",
+                  pathname === link.href
+                    ? "text-primary"
+                    : "text-muted-foreground"
+                )}
             >
               {link.label}
             </Link>
@@ -47,7 +50,7 @@ export function Header() {
 
         <div className="hidden items-center gap-4 md:flex">
           <Button variant="outline" size="sm" asChild>
-            <Link to="/buscar">
+            <Link href="/buscar">
               <Search className="mr-2 h-4 w-4" />
               Buscar
             </Link>
@@ -76,11 +79,11 @@ export function Header() {
             {navLinks.map((link) => (
               <Link
                 key={link.href}
-                to={link.href}
+              href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={cn(
                   "rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                  location.pathname === link.href
+                  pathname === link.href
                     ? "bg-accent text-accent-foreground"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 )}
