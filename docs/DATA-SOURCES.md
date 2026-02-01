@@ -254,3 +254,88 @@ Exibir apenas dados oficiais
 
 Priorizar transparência
 ```
+
+7 Propostas Legislativas (Projetos de Lei)
+Objetivo
+
+Mostrar atuação legislativa direta.
+
+Endpoint
+GET /proposicoes?idAutor={idDeputado}
+
+Exemplo
+/proposicoes?idAutor=204554
+
+Parâmetros recomendados
+?ordem=DESC&ordenarPor=dataApresentacao&itens=20
+
+Dados principais
+siglaTipo
+numero
+ano
+ementa
+dataApresentacao
+statusProposicao
+
+Tela relacionada
+
+Aba "Propostas"
+
+8 Comissões e Cargos Institucionais
+Objetivo
+
+Exibir participação em comissões permanentes, especiais e cargos ocupados.
+
+Endpoint
+GET /deputados/{id}/orgaos
+
+Exemplo
+/deputados/204554/orgaos
+
+Dados importantes
+nomeOrgao
+siglaOrgao
+tipoOrgao
+titulo
+dataInicio
+dataFim
+
+Tipos de órgãos comuns
+
+Comissão Permanente
+
+Comissão Especial
+
+Mesa Diretora
+
+Lideranças
+
+Frentes Parlamentares
+
+Tela relacionada
+
+Aba "Comissões e Cargos"
+
+9 Histórico Parlamentar (Carreira na Câmara)
+Objetivo
+
+Mostrar mandatos anteriores e evolução parlamentar.
+
+Endpoint
+GET /deputados/{id}/historico
+
+Exemplo
+/deputados/204554/historico
+
+Dados importantes
+idLegislatura
+siglaUf
+siglaPartido
+situacao
+condicaoEleitoral
+dataInicio
+dataFim
+
+Tela relacionada
+
+Aba "Histórico"

@@ -34,8 +34,8 @@ export function Footer() {
               para promover a cidadania informada.
             </p>
             <div className="mt-4 flex items-center gap-4">
-              <a
-                href="https://github.com"
+                <a
+                  href="https://github.com/joaoD3V/politicos-br"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground transition-colors hover:text-foreground"

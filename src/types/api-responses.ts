@@ -162,12 +162,41 @@ export interface CamaraEvento {
   localExterno: boolean;
   localCamara: {
     nome: string;
-    predio: string;
+    predic: string;
     sala: string;
   };
   descricaoPauta?: string;
   uriPauta?: string;
   urlRegistroPauta?: string;
+}
+
+export interface CamaraOrgao {
+  idOrgao: number;
+  uriOrgao: string;
+  siglaOrgao: string;
+  nomeOrgao: string;
+  nomePublicacao: string;
+  titulo: string;
+  codTitulo: string;
+  dataInicio: string;
+  dataFim?: string;
+}
+
+export interface CamaraHistorico {
+  id: number;
+  uri: string;
+  nome: string;
+  nomeEleitoral: string;
+  siglaPartido: string;
+  uriPartido: string;
+  siglaUf: string;
+  idLegislatura: number;
+  email: string | null;
+  urlFoto: string;
+  dataHora: string;
+  situacao: string | null;
+  condicaoEleitoral: string | null;
+  descricaoStatus: string;
 }
 
 // Parâmetros de busca
@@ -213,6 +242,15 @@ export interface CareerEvent {
   descricao: string;
 }
 
+export interface Comissao {
+  nome: string;
+  sigla: string;
+  tipo: string;
+  titulo: string;
+  dataInicio: string;
+  dataFim?: string;
+}
+
 export interface VotingStats {
   total: number;
   presentes: number;
@@ -241,16 +279,25 @@ export type ProposalStatus = "Aprovada" | "Em Tramitação" | "Arquivada" | "Rej
 // Funções de mapeamento
 export function mapCamaraDeputyToLocal(deputado: CamaraDeputado | any) {
   // The API returns slightly different shapes between list and detail endpoints.
-  // Be defensive and prefer deputy fields, then fall back to ultimoStatus (detail response).
+  // Be defensive and prefer deputado fields, then fall back to ultimoStatus (detail response).
   const u = deputado?.ultimoStatus ?? {};
+  const gab = deputado?.gabinete ?? u?.gabinete ?? {};
+  const redes = deputado?.redeSocial ?? [];
 
   const id = deputado?.id ?? deputado?.dados?.id ?? undefined;
   const nome = deputado?.nome ?? deputado?.nomeCivil ?? u?.nome ?? '';
   const partido = deputado?.siglaPartido ?? u?.siglaPartido ?? u?.partido ?? '';
   const uf = deputado?.siglaUf ?? u?.siglaUf ?? '';
   const foto = deputado?.urlFoto ?? u?.urlFoto ?? '';
-  const email = deputado?.email ?? u?.email ?? '';
-  const gabinete = deputado?.gabinete ?? u?.gabinete ?? {};
+  const email = gab?.email || '';
+  const telefone = gab?.telefone || '';
+
+  const redesSociaisObj = {
+    twitter: redes.find((r: string) => r.includes('twitter')) || '',
+    instagram: redes.find((r: string) => r.includes('instagram')) || '',
+    facebook: redes.find((r: string) => r.includes('facebook')) || '',
+    youtube: redes.find((r: string) => r.includes('youtube')) || '',
+  };
 
   return {
     id: id ? String(id) : 'unknown',
@@ -259,19 +306,19 @@ export function mapCamaraDeputyToLocal(deputado: CamaraDeputado | any) {
     partido: partido || '',
     uf: uf || '',
     foto: foto || '',
-    email: email || '',
-    telefone: gabinete?.telefone || '',
+    email,
+    telefone,
     situacao: 'Exercício' as const,
-    legislatura: deputado?.idLegislatura ?? u?.idLegislatura ?? 0,
+    legislature: deputado?.idLegislatura ?? u?.idLegislatura ?? 0,
     dataNascimento: formatDate(deputado?.dataNascimento ?? deputado?.data ?? ''),
     naturalidade: deputado?.ufNascimento ? `${deputado.municipioNascimento} - ${deputado.ufNascimento}` : '',
     escolaridade: deputado?.escolaridade ?? u?.escolaridade ?? '',
-    redesSociais: {},
+    redesSociais: redesSociaisObj,
     gabinete: {
-      sala: gabinete?.sala || '',
-      predio: gabinete?.predio || '',
-      andar: gabinete?.andar || '',
-      telefone: gabinete?.telefone || '',
+      sala: gab?.sala || '',
+      predio: gab?.predio || '',
+      andar: gab?.andar || '',
+      telefone: gab?.telefone || '',
     },
     carreira: [],
     proposicoes: [],
@@ -301,6 +348,37 @@ export function mapCamaraDespesaToLocal(despesa: CamaraDespesa) {
     categoria: despesa.tipoDespesa || "",
     valor: despesa.valorDocumento || 0,
     fornecedor: despesa.fornec?.nomeFornecedor || "",
+  };
+}
+
+export function mapCamaraOrgaoToLocal(orgao: CamaraOrgao): Comissao {
+  return {
+    nome: orgao.nomePublicacao || orgao.nomeOrgao || "",
+    sigla: orgao.siglaOrgao || "",
+    tipo: orgao.codTitulo || "",
+    titulo: orgao.titulo && orgao.titulo !== 'null' ? orgao.titulo : "",
+    dataInicio: formatDate(orgao.dataInicio),
+    dataFim: orgao.dataFim ? formatDate(orgao.dataFim) : undefined,
+  };
+}
+
+export function mapCamaraHistoricoToLocal(historico: CamaraHistorico): CareerEvent {
+  const dataParts = historico.dataHora?.split('T')[0].split('-') || [];
+  const ano = dataParts[0] ? parseInt(dataParts[0]) : 0;
+  const dataFormatada = dataParts.length === 3 
+    ? `${dataParts[2]}/${dataParts[1]}/${dataParts[0]}` 
+    : '';
+
+  const partido = historico.siglaPartido ? `(${historico.siglaPartido})` : '';
+  const uf = historico.siglaUf ? `- ${historico.siglaUf}` : '';
+  const condicao = historico.condicaoEleitoral && historico.condicaoEleitoral !== 'null' 
+    ? historico.condicaoEleitoral 
+    : '';
+
+  return {
+    ano,
+    cargo: `${historico.idLegislatura}ª Legislature ${partido} ${uf}`.trim(),
+    descricao: `${dataFormatada} - ${historico.descricaoStatus || 'Não informado'}`.trim(),
   };
 }
 

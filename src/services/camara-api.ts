@@ -2,10 +2,14 @@ import { httpClient } from './api-client';
 import {
   CamaraApiResponse,
   CamaraDeputado,
+  CamaraOrgao,
+  CamaraHistorico,
   DeputadosSearchParams,
-  mapCamaraDeputyToLocal
+  mapCamaraDeputyToLocal,
+  mapCamaraOrgaoToLocal,
+  mapCamaraHistoricoToLocal,
 } from '@/types/api-responses';
-import { Deputy, Proposicao, Despesa } from '@/data/mockDeputies';
+import { Deputy, Proposicao, Despesa, CareerEvent, Comissao } from '@/data/mockDeputies';
 
 /**
  * Serviço para integração com a API Dados Abertos da Câmara dos Deputados
@@ -81,39 +85,36 @@ export class CamaraAPI {
   }
 
   /**
-    * Busca proposições legislativas de um deputado
-    * Endpoint: GET /api/proposicoes?idAutor={id}
+    * Busca proposições legislativas de um deputados
+    * Endpoint: GET /api/proposicoes?idDeputadoAutor={id}
     */
   static async getDeputyProposals(id: string, params: {
     itens?: number;
     pagina?: number;
     ordem?: string;
-    ordenarPor?: string;
   } = {}): Promise<Proposicao[]> {
     try {
-      const response = await httpClient.get<CamaraApiResponse<any>>(
+      const response = await httpClient.get<any>(
         this.BASE_PATHS.PROPOSICOES,
         {
-          idAutor: parseInt(id),
+          idDeputadoAutor: parseInt(id),
           itens: params.itens || 20,
           pagina: params.pagina || 1,
           ordem: params.ordem || 'DESC',
-          ordenarPor: params.ordenarPor || 'dataApresentacao',
         },
         {
           enableCache: true,
-          cacheDuration: 5 * 60 * 1000, // 5 minutos
+          cacheDuration: 10 * 60 * 1000,
         }
       );
 
-      // Simplificar proposições
-      return (response.dados || []).map(item => ({
+      return (response.dados || []).slice(0, 20).map((item: any) => ({
         id: item.id.toString(),
         tipo: item.siglaTipo || "",
         numero: item.numero,
         ano: item.ano,
         ementa: item.ementa || "",
-        status: item.statusProposicao?.sigla || "Em Tramitação",
+        status: "Em Tramitação",
         dataApresentacao: item.dataApresentacao || "",
       }));
     } catch (error) {
@@ -122,8 +123,22 @@ export class CamaraAPI {
     }
   }
 
+  static async getProposicaoDetail(id: string): Promise<any> {
+    try {
+      const response = await httpClient.get<any>(
+        `/api/proposicoes/${id}`,
+        {},
+        { enableCache: true, cacheDuration: 30 * 60 * 1000 }
+      );
+      return response.dados || response;
+    } catch (error) {
+      console.error('Erro ao buscar detalhe da proposição:', error);
+      throw new Error(`Falha ao buscar detalhe da proposição: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    }
+  }
+
   /**
-    * Busca despesas parlamentares de um deputado
+    * Busca despesas parlamentares de um deputados
     * Endpoint: GET /api/deputados/{id}?ano={ano}
     */
   static async getDeputyExpenses(id: string, params: {
@@ -217,7 +232,7 @@ export class CamaraAPI {
     httpClient.clearCache();
   }
 
-  /**
+/**
      * Verifica se a API está disponível
      */
   static async healthCheck(): Promise<boolean> {
@@ -229,6 +244,137 @@ export class CamaraAPI {
       return false;
     }
   }
+
+  /**
+    * Busca comissões e órgãos de um deputado
+    * Endpoint: GET /deputados/{id}/orgaos
+    */
+  static async getDeputyOrgaos(id: string): Promise<Comissao[]> {
+    try {
+      const endpoint = `/api/deputados/${id}/orgaos`;
+
+      const response = await httpClient.get<CamaraApiResponse<CamaraOrgao>>(
+        endpoint,
+        {},
+        {
+          enableCache: true,
+          cacheDuration: 10 * 60 * 1000, // 10 minutos
+        }
+      );
+
+      return (response.dados || []).map(mapCamaraOrgaoToLocal);
+    } catch (error) {
+      console.error('Erro ao buscar órgãos:', error);
+      throw new Error(`Falha ao buscar órgãos: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    }
+  }
+
+  /**
+    * Busca histórico parlamentar de um deputados
+    * Endpoint: GET /deputados/{id}/historico
+    */
+  static async getDeputyHistorico(id: string): Promise<CareerEvent[]> {
+    try {
+      const endpoint = `/api/deputados/${id}/historico`;
+
+      const response = await httpClient.get<CamaraApiResponse<CamaraHistorico>>(
+        endpoint,
+        {},
+        {
+          enableCache: true,
+          cacheDuration: 10 * 60 * 1000, // 10 minutos
+        }
+      );
+
+      return (response.dados || []).map(mapCamaraHistoricoToLocal);
+    } catch (error) {
+      console.error('Erro ao buscar histórico:', error);
+      throw new Error(`Falha ao buscar histórico: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    }
+  }
+
+  /**
+    * Busca estatísticas de presença de um deputados
+    * Endpoint: GET /deputados/{id}/eventos
+    */
+  static async getDeputyPresence(id: string): Promise<{
+    sessoes: number;
+    presencas: number;
+    ausenciasJustificadas: number;
+    ausenciasNaoJustificadas: number;
+  }> {
+    try {
+      const endpoint = `/api/deputados/${id}/eventos`;
+
+      const response = await httpClient.get<CamaraApiResponse<any>>(
+        endpoint,
+        {
+          itens: 100,
+        },
+        {
+          enableCache: true,
+          cacheDuration: 10 * 60 * 1000,
+        }
+      );
+
+      const eventos = response.dados || [];
+      
+      let presencas = 0;
+      let ausenciasJustificadas = 0;
+      let ausenciasNaoJustificadas = 0;
+
+      eventos.forEach((evento: any) => {
+        const situacao = evento?.situacao?.toLowerCase() || '';
+        if (situacao.includes('realizada') || situacao.includes('emandada')) {
+          const frequencia = evento?.frequencia?.toLowerCase() || '';
+          if (frequencia === 'presentes' || frequencia === 'presença') {
+            presencas++;
+          } else if (frequencia === 'ausência justificada') {
+            ausenciasJustificadas++;
+          } else if (frequencia === 'ausência') {
+            ausenciasNaoJustificadas++;
+          }
+        }
+      });
+
+      const sessoes = presencas + ausenciasJustificadas + ausenciasNaoJustificadas;
+
+      return {
+        sessoes,
+        presencas,
+        ausenciasJustificadas,
+        ausenciasNaoJustificadas,
+      };
+    } catch (error) {
+      console.error('Erro ao buscar presença:', error);
+      return {
+        sessoes: 0,
+        presencas: 0,
+        ausenciasJustificadas: 0,
+        ausenciasNaoJustificadas: 0,
+      };
+    }
+  }
+
+  /**
+    * Busca estatísticas de votações de um deputados
+    * Endpoint: GET /deputados/{id}/votacoes
+    */
+  static async getDeputyVotingStats(id: string): Promise<{
+    total: number;
+    presentes: number;
+    ausentes: number;
+    abstencoes: number;
+  }> {
+    // The /deputados/{id}/votacoes endpoint doesn't support GET requests
+    // Return empty stats since voting data isn't available via API
+    return {
+      total: 0,
+      presentes: 0,
+      ausentes: 0,
+      abstencoes: 0,
+    };
+  }
 }
 
 // Exportar funções individuais para facilitar uso
@@ -238,6 +384,10 @@ export const {
   getDeputyProposals,
   getDeputyExpenses,
   getDeputyVotes,
+  getDeputyOrgaos,
+  getDeputyHistorico,
+  getDeputyPresence,
+  getDeputyVotingStats,
   searchWithFilters,
   clearCache,
   healthCheck,

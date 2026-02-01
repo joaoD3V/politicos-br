@@ -8,14 +8,14 @@ export async function GET(request: NextRequest) {
   // Extrai parâmetros da query
   const params = new URLSearchParams();
   searchParams.forEach((value, key) => {
-    if (key !== 'idAutor') { // Remove idAutor para adicionar depois
+    if (key !== 'idDeputadoAutor' && key !== 'ordenarPor') {
       params.append(key, value);
     }
   });
 
-  // Adiciona o parâmetro idAutor corretamente
-  if (searchParams.has('idAutor')) {
-    params.append('idAutor', searchParams.get('idAutor')!);
+  // Adiciona o parâmetro idDeputadoAutor corretamente
+  if (searchParams.has('idDeputadoAutor')) {
+    params.append('idDeputadoAutor', searchParams.get('idDeputadoAutor')!);
   }
 
   try {

@@ -25,17 +25,26 @@ export interface Deputy {
     telefone: string;
   };
   carreira: CareerEvent[];
+  comissoes: (string | Comissao)[];
   proposicoes: Proposicao[];
   despesas: Despesa[];
   votacoes: VotingStats;
   presenca: AttendanceStats;
-  comissoes: string[];
 }
 
 export interface CareerEvent {
   ano: number;
   cargo: string;
   descricao: string;
+}
+
+export interface Comissao {
+  nome: string;
+  sigla: string;
+  tipo: string;
+  titulo: string;
+  dataInicio: string;
+  dataFim?: string;
 }
 
 export interface Proposicao {

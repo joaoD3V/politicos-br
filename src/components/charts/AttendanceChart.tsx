@@ -8,7 +8,6 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AttendanceStats, VotingStats } from "@/data/mockDeputies";
 
 interface AttendanceChartProps {
@@ -47,40 +46,33 @@ export function AttendanceChart({ attendance, voting }: AttendanceChartProps) {
   ];
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">Participação e Presença</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[250px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} layout="vertical" margin={{ left: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-              <XAxis type="number" tick={{ fontSize: 12 }} />
-              <YAxis
-                type="category"
-                dataKey="name"
-                tick={{ fontSize: 11 }}
-                width={120}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Bar
-                dataKey="Presentes"
-                fill="hsl(142, 76%, 36%)"
-                stackId="a"
-                radius={[0, 4, 4, 0]}
-              />
-              <Bar
-                dataKey="Ausências"
-                fill="hsl(0, 84%, 60%)"
-                stackId="a"
-                radius={[0, 4, 4, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="h-[250px]">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={data} layout="vertical" margin={{ left: 20 }}>
+          <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+          <XAxis type="number" tick={{ fontSize: 12 }} />
+          <YAxis
+            type="category"
+            dataKey="name"
+            tick={{ fontSize: 11 }}
+            width={120}
+          />
+          <Tooltip content={<CustomTooltip />} />
+          <Legend />
+          <Bar
+            dataKey="Presentes"
+            fill="hsl(142, 76%, 36%)"
+            stackId="a"
+            radius={[0, 4, 4, 0]}
+          />
+          <Bar
+            dataKey="Ausências"
+            fill="hsl(0, 84%, 60%)"
+            stackId="a"
+            radius={[0, 4, 4, 0]}
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
